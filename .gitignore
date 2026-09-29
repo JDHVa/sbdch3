@@ -1,0 +1,26 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Python (módulo de visión)
+vision/.venv
+vision/out
+__pycache__
+*.pyc
+
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+
+# TS build info
+*.tsbuildinfo
