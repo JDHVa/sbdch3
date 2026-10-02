@@ -255,6 +255,13 @@ export function VideoValidation() {
         error RMS = {fmt(calibration.rmsError, 2)} s. Las filas tenues son mediciones menos seguras (el final del tubo
         queda tapado por una mano).
       </div>
+      <div className="hint" style={{ marginTop: 6 }}>
+        Nota: la gravedad usada es la de la Tierra (9.81 m/s²). Si en el modo real pones Marte (3.72) la simulación
+        <em> parece</em> cuadrar mejor con el video, pero es coincidencia: al bajar <code>g</code> también baja la
+        carga centrípeta <code>v²·κ</code> en las curvas cerradas (espiral de la torre mediana, aro final), que es lo
+        que limita cuánta fricción cabe antes de que el balín se frene en seco. El modelo subestima las pérdidas
+        reales por kinks y golpeteo del tubo; una geometría con más detalle en las curvas acercaría más la Tierra.
+      </div>
     </Card>
   );
 }

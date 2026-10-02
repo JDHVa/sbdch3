@@ -238,13 +238,17 @@ export const VIDEO_FPS = 29.65;
 export const VIDEO_RELEASE_FRAME = 5;
 
 export const VIDEO_CHECKPOINTS: { id: CheckpointId; frame: number; weight: number; note: string }[] = [
-  { id: 'entre', frame: 43, weight: 1, note: 'cruza la curva en S' },
-  { id: 'm_entrada', frame: 52, weight: 0.5, note: 'llega a la torre mediana' },
+  // Pesos pensados para que la calibración use también el final del recorrido:
+  // el balín llega al aro ~4.55 s y es un dato clave para la "forma" del frenado.
+  // Los puntos tempranos pasan muy rápido en el video y son difíciles de
+  // ubicar con precisión, así que su peso es menor.
+  { id: 'entre', frame: 43, weight: 0.5, note: 'cruza la curva en S' },
+  { id: 'm_entrada', frame: 52, weight: 0.4, note: 'llega a la torre mediana' },
   { id: 'm_atras', frame: 61, weight: 0.7, note: 'detrás de la mediana' },
   { id: 'm_salida', frame: 69, weight: 1, note: 'sale de la espiral' },
   { id: 's_punta', frame: 84, weight: 1, note: 'punta de la caja (pequeña)' },
   { id: 's_fin', frame: 95, weight: 1, note: 'termina los cinchos' },
-  { id: 'final', frame: 140, weight: 0.3, note: 'entra al aro (se ve rodando a los 160)' },
+  { id: 'final', frame: 140, weight: 0.7, note: 'entra al aro (se ve rodando a los 160)' },
 ];
 
 export const videoTime = (frame: number): number => (frame - VIDEO_RELEASE_FRAME) / VIDEO_FPS;
@@ -296,6 +300,11 @@ export function videoFitError(track: Track, params: EnergyParams): number {
  * Calibra las pérdidas para que los tiempos simulados se parezcan lo más
  * posible a los del video: μ (rodadura, proporcional a la fuerza de las
  * paredes) y k (arrastre cuadrático). Malla gruesa + búsqueda por patrones.
+ *
+ * El rango de μ llega a 0.6 porque el balín dentro del tubo pierde más
+ * energía por constacto/golpeteo que un rodamiento limpio, y porque solo
+ * con k·v² el inicio del recorrido queda demasiado frenado respecto al
+ * video (ver pestaña "Video").
  */
 export function calibrateLosses(
   track: Track,
@@ -306,7 +315,7 @@ export function calibrateLosses(
   let mu = 0;
   let drag = 0;
   let best = Infinity;
-  for (let m = 0; m <= 0.3 + 1e-9; m += 0.02) {
+  for (let m = 0; m <= 0.6 + 1e-9; m += 0.02) {
     for (let k = 0; k <= 3 + 1e-9; k += 0.1) {
       const e = f(m, k);
       if (e < best) {
@@ -318,7 +327,7 @@ export function calibrateLosses(
   }
   let dm = 0.01;
   let dk = 0.05;
-  for (let it = 0; it < 60 && dm > 1e-4; it++) {
+  for (let it = 0; it < 80 && dm > 1e-5; it++) {
     let improved = false;
     for (const [a, b] of [[dm, 0], [-dm, 0], [0, dk], [0, -dk]]) {
       const e = f(mu + a, drag + b);
