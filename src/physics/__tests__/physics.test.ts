@@ -90,6 +90,7 @@ describe('fuerza normal y contacto en el loop', () => {
     tangent: vec(-1, 0, 0), // en la cima del rizo se avanza hacia −x
     supportNormal: vec(0, -1, 0), // la canica se apoya hacia el interior (abajo)
     curvature: 1 / 0.28, // curvatura con signo respecto al soporte (positiva)
+    curvatureVec: vec(0, -1 / 0.28, 0),
     height: 1,
   };
 
@@ -113,6 +114,7 @@ describe('fuerza normal y contacto en el loop', () => {
     tangent: vec(1, 0, 0),
     supportNormal: vec(0, 1, 0), // la canica se apoya por encima
     curvature: -1 / 0.3, // curva en contra del soporte (negativa)
+    curvatureVec: vec(0, -1 / 0.3, 0),
     height: 1,
   };
 

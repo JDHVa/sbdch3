@@ -17,6 +17,15 @@
  *     ⇒ N = m·(g − v²·κ); se despega ("airtime") si va demasiado rápido.
  *   • Valle o tramo recto: N ≈ m·g·(componente de apoyo), siempre positiva.
  *
+ * Pista **cerrada** (tubo / manguera, `enclosed`): las paredes empujan en
+ * cualquier dirección perpendicular, así que la canica nunca pierde contacto.
+ * La fuerza de las paredes es el vector
+ *
+ *   N⃗ = m·(v²·κ⃗ + g·(ŷ − (ŷ·t̂)·t̂))
+ *
+ * (centrípeta en 3D + la parte del peso que la pared sostiene) y se reporta su
+ * magnitud |N⃗|.
+ *
  * Los "g's" son N / (m·g): cuántas veces su peso siente la canica.
  */
 
@@ -37,11 +46,40 @@ export interface ForceResult {
 export interface ForceParams {
   mass: number;
   gravity: number;
+  /** Pista cerrada (tubo): las paredes sostienen en cualquier dirección. */
+  enclosed?: boolean;
+}
+
+/**
+ * Magnitud de la fuerza de las paredes por unidad de masa (m/s²) en un tubo:
+ * |v²·κ⃗ + g·(ŷ − (ŷ·t̂)·t̂)|.
+ */
+export function wallAccel(sample: SampledPoint, speedSq: number, gravity: number): number {
+  const t = sample.tangent;
+  const k = sample.curvatureVec;
+  const ty = t.y;
+  const x = speedSq * k.x + gravity * (0 - ty * t.x);
+  const y = speedSq * k.y + gravity * (1 - ty * t.y);
+  const z = speedSq * k.z + gravity * (0 - ty * t.z);
+  return Math.sqrt(x * x + y * y + z * z);
 }
 
 /** Fuerza normal y g's en una muestra de la pista, dada la rapidez. */
 export function forceAt(sample: SampledPoint, speed: number, p: ForceParams): ForceResult {
   const { mass, gravity } = p;
+
+  if (p.enclosed) {
+    const k = sample.curvatureVec;
+    const kappa = Math.sqrt(k.x * k.x + k.y * k.y + k.z * k.z);
+    const normalForce = mass * wallAccel(sample, speed * speed, gravity);
+    return {
+      normalForce,
+      gForce: gravity > 0 ? normalForce / (mass * gravity) : 0,
+      centripetal: speed * speed * kappa,
+      losesContact: false,
+    };
+  }
+
   const kappaS = sample.curvature; // curvatura con signo respecto al soporte
   const centripetal = speed * speed * Math.abs(kappaS);
 

@@ -16,6 +16,9 @@ import {
   readout,
   DEFAULT_ENERGY_PARAMS,
   DEFAULT_SHAPE,
+  realCoasterPoints,
+  calibrateLosses,
+  REAL_BASE_PARAMS,
   type EnergyParams,
   type EnergyPoint,
   type PieceType,
@@ -26,8 +29,15 @@ import {
 } from '../physics';
 
 export type DataSourceKind = 'simulated' | 'serial' | 'websocket' | 'video';
-export type AppMode = 'demo' | 'builder';
+export type AppMode = 'real' | 'demo' | 'builder';
 export type CameraMode = 'orbit' | 'ride';
+
+/** Resultado de calibrar las pérdidas con los tiempos del video. */
+export interface Calibration {
+  mu: number;
+  drag: number;
+  rmsError: number;
+}
 
 interface CoasterState {
   // --- Modo de la app ---
@@ -42,6 +52,8 @@ interface CoasterState {
 
   // --- Parámetros físicos ---
   params: EnergyParams;
+  /** Calibración de la montaña real contra el video (fija). */
+  calibration: Calibration;
 
   // --- Simulación ---
   sim: SimState;
@@ -70,37 +82,61 @@ interface CoasterState {
   setDataSource: (k: DataSourceKind) => void;
 }
 
+// Montaña real: pista fija, se construye y calibra una vez al cargar (≈0.1 s).
+const REAL_POINTS = realCoasterPoints();
+export const REAL_TRACK = buildTrack(REAL_POINTS, 24);
+
 function rebuild(controlPoints: Vec3[], params: EnergyParams) {
-  const track = buildTrack(controlPoints, 24);
+  const track = controlPoints === REAL_POINTS ? REAL_TRACK : buildTrack(controlPoints, 24);
   const energyProfile = computeEnergyProfile(track, params);
   return { track, energyProfile };
 }
 
+const CALIBRATION: Calibration = calibrateLosses(REAL_TRACK);
+export const REAL_PARAMS: EnergyParams = {
+  ...REAL_BASE_PARAMS,
+  friction: CALIBRATION.mu,
+  drag: CALIBRATION.drag,
+};
+
+/** Parámetros de partida de cada modo. */
+function paramsFor(mode: AppMode): EnergyParams {
+  if (mode === 'real') return REAL_PARAMS;
+  // En el constructor el carrito recibe un pequeño empujón inicial (como la
+  // cadena del lift) para que no se quede en la cima plana. En demo se suelta
+  // desde el reposo.
+  return { ...DEFAULT_ENERGY_PARAMS, initialSpeed: mode === 'builder' ? 3 : 0 };
+}
+
+function pointsFor(s: { mode: AppMode; pieces: PieceType[]; controlPoints: Vec3[] }): Vec3[] {
+  if (s.mode === 'real') return REAL_POINTS;
+  if (s.mode === 'builder') return buildPiecesToPoints(s.pieces);
+  return s.controlPoints;
+}
+
 const initialPoints = defaultCoasterPoints(DEFAULT_SHAPE);
-const initial = rebuild(initialPoints, DEFAULT_ENERGY_PARAMS);
+const initial = rebuild(REAL_POINTS, REAL_PARAMS);
 const initialSim = createSimState();
 
 export const useCoasterStore = create<CoasterState>((set) => ({
-  mode: 'demo',
+  mode: 'real',
   cameraMode: 'orbit',
   controlPoints: initialPoints,
   pieces: DEFAULT_PIECES,
   track: initial.track,
   energyProfile: initial.energyProfile,
-  params: DEFAULT_ENERGY_PARAMS,
+  params: REAL_PARAMS,
+  calibration: CALIBRATION,
   sim: initialSim,
   running: false,
-  live: readout(initial.track, DEFAULT_ENERGY_PARAMS, 0),
+  live: readout(initial.track, REAL_PARAMS, 0),
   speedMultiplier: 1,
   dataSource: 'simulated',
 
   setMode: (mode) =>
     set((s) => {
-      // En el constructor el carrito recibe un pequeño empujón inicial (como la
-      // cadena del lift) para que no se quede en la cima plana. En demo se suelta
-      // desde el reposo.
-      const params = { ...s.params, initialSpeed: mode === 'builder' ? 3 : 0 };
-      const points = mode === 'builder' ? buildPiecesToPoints(s.pieces) : s.controlPoints;
+      const params = paramsFor(mode);
+      const points = pointsFor({ ...s, mode });
       const { track, energyProfile } = rebuild(points, params);
       return {
         mode,
@@ -143,8 +179,7 @@ export const useCoasterStore = create<CoasterState>((set) => ({
   setParams: (patch) =>
     set((s) => {
       const params = { ...s.params, ...patch };
-      const points = s.mode === 'builder' ? buildPiecesToPoints(s.pieces) : s.controlPoints;
-      const { track, energyProfile } = rebuild(points, params);
+      const { track, energyProfile } = rebuild(pointsFor(s), params);
       return { params, track, energyProfile, live: readout(track, params, s.sim.s) };
     }),
 

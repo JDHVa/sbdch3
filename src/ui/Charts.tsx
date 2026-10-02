@@ -19,6 +19,7 @@ import {
 } from 'recharts';
 import { useCoasterStore } from '../state/useCoasterStore';
 import { forceAt } from '../physics';
+import { Card } from './kit';
 
 interface Row {
   s: number;
@@ -36,6 +37,7 @@ export function Charts() {
   const profile = useCoasterStore((s) => s.energyProfile);
   const params = useCoasterStore((s) => s.params);
   const liveS = useCoasterStore((s) => s.live.s);
+  const enclosed = !!params.enclosed;
 
   const data = useMemo<Row[]>(() => {
     const stepN = Math.max(1, Math.floor(track.samples.length / MAX_POINTS));
@@ -56,12 +58,11 @@ export function Charts() {
     return rows;
   }, [track, profile, params]);
 
-  const axis = { stroke: '#6b7684', fontSize: 10 };
-  const grid = '#232a34';
+  const axis = { stroke: '#6f7a8a', fontSize: 10 };
+  const grid = '#222936';
 
   return (
-    <div className="card">
-      <h2>Gráficas vs distancia</h2>
+    <Card icon="graph-up" title="Gráficas vs distancia">
 
       <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 4 }}>Energía (mJ)</div>
       <ResponsiveContainer width="100%" height={130}>
@@ -92,7 +93,9 @@ export function Charts() {
         </LineChart>
       </ResponsiveContainer>
 
-      <div style={{ fontSize: 12, color: 'var(--muted)', margin: '8px 0 4px' }}>Fuerza normal (g)</div>
+      <div style={{ fontSize: 12, color: 'var(--muted)', margin: '8px 0 4px' }}>
+        {enclosed ? 'Fuerza de las paredes del tubo (g)' : 'Fuerza normal (g)'}
+      </div>
       <ResponsiveContainer width="100%" height={110}>
         <LineChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -18 }}>
           <CartesianGrid stroke={grid} />
@@ -106,8 +109,10 @@ export function Charts() {
       </ResponsiveContainer>
 
       <div className="hint" style={{ marginTop: 6 }}>
-        Debajo de la línea roja (g &lt; 0), la canica perdería contacto en el rizo.
+        {enclosed
+          ? 'Picos = curvas cerradas (punta del brazo, caja de la torre pequeña, vuelta final).'
+          : 'Debajo de la línea roja (g < 0), la canica perdería contacto en el rizo.'}
       </div>
-    </div>
+    </Card>
   );
 }

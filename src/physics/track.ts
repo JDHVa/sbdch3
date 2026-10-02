@@ -49,6 +49,11 @@ export interface SampledPoint {
    *   ≈ 0  tramo recto.
    */
   curvature: number;
+  /**
+   * Vector de curvatura dT/ds (1/m): apunta al centro de curvatura y su
+   * magnitud es κ = 1/R. Sirve para la fuerza de las paredes en un tubo 3D.
+   */
+  curvatureVec: Vec3;
   /** Altura = componente Y (m). */
   height: number;
 }
@@ -162,6 +167,7 @@ export function buildTrack(controlPoints: Vec3[], samplesPerSegment = 24): Track
       tangent: t,
       supportNormal: support,
       curvature,
+      curvatureVec: dTds,
       height: positions[i].y,
     });
   }
@@ -212,6 +218,7 @@ export function sampleAt(track: Track, sTarget: number): SampledPoint {
     tangent: normalize(add(a.tangent, scale(sub(b.tangent, a.tangent), f))),
     supportNormal: normalize(add(a.supportNormal, scale(sub(b.supportNormal, a.supportNormal), f))),
     curvature: a.curvature + (b.curvature - a.curvature) * f,
+    curvatureVec: add(a.curvatureVec, scale(sub(b.curvatureVec, a.curvatureVec), f)),
     height: a.height + (b.height - a.height) * f,
   };
 }

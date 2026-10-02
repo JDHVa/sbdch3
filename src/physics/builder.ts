@@ -13,16 +13,17 @@ export type PieceType = 'straight' | 'up' | 'down' | 'left' | 'right' | 'loop';
 export interface PieceDef {
   type: PieceType;
   label: string;
+  /** Nombre del ícono de Bootstrap Icons. */
   icon: string;
 }
 
 export const PIECES: PieceDef[] = [
-  { type: 'straight', label: 'Recto', icon: '→' },
-  { type: 'up', label: 'Subida', icon: '↗' },
-  { type: 'down', label: 'Bajada', icon: '↘' },
-  { type: 'left', label: 'Curva izq.', icon: '↰' },
-  { type: 'right', label: 'Curva der.', icon: '↱' },
-  { type: 'loop', label: 'Rizo', icon: '◯' },
+  { type: 'straight', label: 'Recto', icon: 'arrow-right' },
+  { type: 'up', label: 'Subida', icon: 'arrow-up-right' },
+  { type: 'down', label: 'Bajada', icon: 'arrow-down-right' },
+  { type: 'left', label: 'Curva izq.', icon: 'arrow-90deg-left' },
+  { type: 'right', label: 'Curva der.', icon: 'arrow-90deg-right' },
+  { type: 'loop', label: 'Rizo', icon: 'arrow-repeat' },
 ];
 
 // Escala de las piezas (m).

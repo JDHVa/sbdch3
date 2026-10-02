@@ -7,6 +7,7 @@
 import { useRef, useState } from 'react';
 import { useCoasterStore } from '../state/useCoasterStore';
 import { makeVerticalLoop, vec, type Vec3 } from '../physics';
+import { Card, Icon } from './kit';
 
 const VIEW_W = 340;
 const VIEW_H = 150;
@@ -71,8 +72,7 @@ export function TrackEditor() {
   }
 
   return (
-    <div className="card">
-      <h2>Editor de pista</h2>
+    <Card icon="bezier2" title="Editor de pista">
       <svg
         ref={svgRef}
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
@@ -105,8 +105,14 @@ export function TrackEditor() {
       </svg>
 
       <div className="row" style={{ marginTop: 10, justifyContent: 'space-between' }}>
-        <button onClick={resetTrack}>↺ Pista por defecto</button>
-        <button onClick={insertLoop}>◯ Insertar loop</button>
+        <button onClick={resetTrack}>
+          <Icon name="arrow-counterclockwise" />
+          <span>Pista por defecto</span>
+        </button>
+        <button onClick={insertLoop}>
+          <Icon name="arrow-repeat" />
+          <span>Insertar loop</span>
+        </button>
       </div>
 
       <div className="control" style={{ marginTop: 12 }}>
@@ -124,6 +130,6 @@ export function TrackEditor() {
       </div>
 
       <div className="hint">Arrastra los puntos para esculpir la pista. La física se recalcula al instante.</div>
-    </div>
+    </Card>
   );
 }

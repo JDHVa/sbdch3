@@ -24,3 +24,7 @@ Thumbs.db
 
 # TS build info
 *.tsbuildinfo
+
+# Material de referencia local (fotos de la maqueta, video de calibración).
+# Solo se usan desde vision/ y como referencia en comentarios; la app no las sirve.
+imagenes/

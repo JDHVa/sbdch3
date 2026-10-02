@@ -41,8 +41,12 @@ class Detection:
 # Detección
 # --------------------------------------------------------------------------- #
 
-def detect_hough(gray: np.ndarray, min_r: int, max_r: int) -> list[tuple[float, float, float]]:
-    """Devuelve todos los círculos candidatos (ordenados por fuerza)."""
+def detect_hough(gray: np.ndarray, min_r: int, max_r: int, param2: int = 30) -> list[tuple[float, float, float]]:
+    """Devuelve todos los círculos candidatos (ordenados por fuerza).
+
+    param2 = umbral del acumulador de Hough: más alto → menos círculos (más
+    exigente, evita falsos como puntos/reflejos); más bajo → más detecciones.
+    """
     blurred = cv2.medianBlur(gray, 5)
     circles = cv2.HoughCircles(
         blurred,
@@ -50,7 +54,7 @@ def detect_hough(gray: np.ndarray, min_r: int, max_r: int) -> list[tuple[float, 
         dp=1.2,
         minDist=gray.shape[0] / 4,
         param1=120,
-        param2=30,
+        param2=param2,
         minRadius=min_r,
         maxRadius=max_r,
     )
@@ -138,7 +142,7 @@ def track(args) -> tuple[list[Detection], float, tuple[int, int]]:
             candidates = [one] if one is not None else []
         else:  # hough (forma) — sirve para balines metálicos/grises
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            candidates = detect_hough(gray, args.min_radius, args.max_radius)
+            candidates = detect_hough(gray, args.min_radius, args.max_radius, args.hough_param2)
 
         det = pick_circle(candidates, last_pos, max_jump)
 
@@ -588,6 +592,8 @@ def main():
                    help="Detección por forma (hough, para balín metálico) o color (HSV).")
     p.add_argument("--min-radius", type=int, default=4)
     p.add_argument("--max-radius", type=int, default=80)
+    p.add_argument("--hough-param2", type=int, default=30,
+                   help="Umbral de Hough: más alto = menos círculos falsos.")
     p.add_argument("--max-jump", type=float, default=0,
                    help="Salto máximo plausible del balín entre cuadros (px). 0 = 20%% del ancho.")
     p.add_argument("--hsv-lo", type=int, nargs=3, default=[35, 80, 80], help="HSV inferior (método color).")

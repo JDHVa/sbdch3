@@ -6,3 +6,4 @@ export * from './forces';
 export * from './simulate';
 export * from './presets';
 export * from './builder';
+export * from './realCoaster';
