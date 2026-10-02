@@ -15,6 +15,7 @@ import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { REAL_TRACK, useCoasterStore } from '../state/useCoasterStore';
 import { Icon, Segmented, type SegmentOption } from '../ui/kit';
+import { fmt } from '../ui/format';
 import {
   ARMS,
   BALL,
@@ -214,8 +215,31 @@ function ZipTies() {
 
 const _ball = new THREE.Vector3();
 
+/** Lecturas en vivo que aparecen al pasar el cursor sobre el balín. */
+function BallTooltip() {
+  const live = useCoasterStore((s) => s.live);
+  const time = useCoasterStore((s) => s.sim.time);
+  return (
+    <div className="ball-tooltip">
+      <div className="bt-title">
+        <Icon name="dot" />
+        <span>Balín · datos en vivo</span>
+      </div>
+      <div className="bt-grid">
+        <div className="bt-row"><span>Rapidez</span><b>{fmt(live.speed, 2)}</b><em>m/s</em></div>
+        <div className="bt-row"><span>Altura</span><b>{fmt(live.height * 100, 1)}</b><em>cm</em></div>
+        <div className="bt-row"><span>Fuerza</span><b>{fmt(live.force.gForce, 1)}</b><em>g</em></div>
+        <div className="bt-row"><span>E mec</span><b>{fmt(live.mechanical * 1000, 1)}</b><em>mJ</em></div>
+        <div className="bt-row"><span>Recorrido</span><b>{fmt(live.s, 2)}</b><em>m</em></div>
+        <div className="bt-row"><span>Tiempo</span><b>{fmt(time, 2)}</b><em>s</em></div>
+      </div>
+    </div>
+  );
+}
+
 function Ball() {
   const ref = useRef<THREE.Group>(null);
+  const [hover, setHover] = useState(false);
   useFrame(() => {
     const { mode, live } = useCoasterStore.getState();
     if (mode !== 'real') return;
@@ -223,17 +247,38 @@ function Ball() {
     _ball.set(p.x, p.y, p.z);
     ref.current?.position.copy(_ball);
   });
+
+  const onOver = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    setHover(true);
+    document.body.style.cursor = 'pointer';
+  };
+  const onOut = () => {
+    setHover(false);
+    document.body.style.cursor = '';
+  };
+
   return (
     <group ref={ref}>
-      <mesh castShadow renderOrder={1}>
+      <mesh castShadow renderOrder={1} onPointerOver={onOver} onPointerOut={onOut}>
         <sphereGeometry args={[BALL.radius, 24, 24]} />
         <meshStandardMaterial color="#d9dde2" metalness={0.95} roughness={0.18} />
       </mesh>
-      {/* Halo para encontrarlo (el balín real mide 1 cm). */}
-      <mesh renderOrder={3}>
+      {/* Halo para encontrarlo (el balín real mide 1 cm). Agranda el área de hover. */}
+      <mesh renderOrder={3} onPointerOver={onOver} onPointerOut={onOut}>
         <sphereGeometry args={[0.016, 20, 20]} />
-        <meshBasicMaterial color="#ffcf3f" transparent opacity={0.28} depthWrite={false} />
+        <meshBasicMaterial color="#ffcf3f" transparent opacity={hover ? 0.5 : 0.28} depthWrite={false} />
       </mesh>
+      {hover && (
+        <Html
+          position={[0, 0.045, 0]}
+          center
+          zIndexRange={[20, 10]}
+          style={{ pointerEvents: 'none' }}
+        >
+          <BallTooltip />
+        </Html>
+      )}
     </group>
   );
 }
@@ -340,6 +385,22 @@ function ToggleChip({ on, onClick, icon, label }: { on: boolean; onClick: () => 
   );
 }
 
+/** Insignia que muestra que la simulación está calibrada con los tiempos del video. */
+function CalibrationBadge() {
+  const calibration = useCoasterStore((s) => s.calibration);
+  const title = `Pérdidas ajustadas por mínimos cuadrados contra los tiempos medidos en el video.\nμ = ${fmt(calibration.mu, 3)}  ·  k = ${fmt(calibration.drag, 2)} m⁻¹  ·  RMS = ${fmt(calibration.rmsError, 2)} s`;
+  return (
+    <div className="calib-chip glass" title={title}>
+      <span className="calib-dot" aria-hidden />
+      <Icon name="camera-reels" />
+      <span className="calib-text">
+        <b>Calibrado con video</b>
+        <em>RMS {fmt(calibration.rmsError, 2)} s · μ {fmt(calibration.mu, 3)} · k {fmt(calibration.drag, 2)}</em>
+      </span>
+    </div>
+  );
+}
+
 export function RealModelScene() {
   const [preset, setPreset] = useState<ViewPreset>('video');
   const [nonce, setNonce] = useState(0);
@@ -358,9 +419,12 @@ export function RealModelScene() {
             setNonce((n) => n + 1);
           }}
         />
-        <div className="view-group glass">
-          <ToggleChip on={showDims} onClick={() => setShowDims((v) => !v)} icon="rulers" label="Cotas" />
-          <ToggleChip on={showMarks} onClick={() => setShowMarks((v) => !v)} icon="123" label="Puntos" />
+        <div className="view-bar-right">
+          <CalibrationBadge />
+          <div className="view-group glass">
+            <ToggleChip on={showDims} onClick={() => setShowDims((v) => !v)} icon="rulers" label="Cotas" />
+            <ToggleChip on={showMarks} onClick={() => setShowMarks((v) => !v)} icon="123" label="Puntos" />
+          </div>
         </div>
       </div>
 

@@ -762,6 +762,147 @@ select {
   pointer-events: none;
 }
 
+/* Tooltip flotante al pasar el cursor sobre el balín en la escena 3D */
+.ball-tooltip {
+  position: relative;
+  min-width: 180px;
+  padding: 9px 11px 10px;
+  border-radius: 10px;
+  background: rgba(10, 14, 20, 0.92);
+  color: var(--text);
+  border: 1px solid rgba(255, 207, 63, 0.45);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+  font: 500 12px 'Inter', system-ui, sans-serif;
+  transform: translateY(-6px);
+}
+
+.ball-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%) rotate(45deg);
+  width: 9px;
+  height: 9px;
+  background: rgba(10, 14, 20, 0.92);
+  border-right: 1px solid rgba(255, 207, 63, 0.45);
+  border-bottom: 1px solid rgba(255, 207, 63, 0.45);
+}
+
+.ball-tooltip .bt-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffcf3f;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ball-tooltip .bt-title .bi {
+  color: #ffcf3f;
+  font-size: 14px;
+}
+
+.ball-tooltip .bt-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 10px;
+}
+
+.ball-tooltip .bt-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ball-tooltip .bt-row span {
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.ball-tooltip .bt-row b {
+  color: var(--text);
+  font-size: 13px;
+  text-align: right;
+  justify-self: end;
+}
+
+.ball-tooltip .bt-row em {
+  color: var(--muted);
+  font-style: normal;
+  font-size: 10px;
+}
+
+/* Insignia "Calibrado con video" en la barra superior de la escena real */
+.view-bar-right {
+  display: inline-flex;
+  gap: 8px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.calib-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 11px;
+  border-radius: 11px;
+  color: var(--text);
+  cursor: help;
+  border: 1px solid rgba(90, 209, 155, 0.45);
+}
+
+.calib-chip .bi {
+  color: var(--total);
+  font-size: 15px;
+}
+
+.calib-chip .calib-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--total);
+  box-shadow: 0 0 0 0 rgba(90, 209, 155, 0.7);
+  animation: calib-pulse 2.1s ease-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes calib-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(90, 209, 155, 0.55); }
+  70% { box-shadow: 0 0 0 7px rgba(90, 209, 155, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(90, 209, 155, 0); }
+}
+
+.calib-chip .calib-text {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.calib-chip .calib-text b {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.calib-chip .calib-text em {
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* --- Montaña real: cálculos ------------------------------------------------------------ */
 
 .formula {
@@ -917,6 +1058,9 @@ code {
   }
   .view-bar .segmented span,
   .chip-toggle span {
+    display: none;
+  }
+  .calib-chip .calib-text em {
     display: none;
   }
   .hud-stats {
