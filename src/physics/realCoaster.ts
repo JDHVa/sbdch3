@@ -144,12 +144,32 @@ function aroundMedium(deg: number, y: number): Vec3 {
 }
 
 const PATH: PathPoint[] = [
-  // A · Arco desde la boca (sobre la torre grande) hasta la punta del brazo alto.
+  // A · Boca sobre la torre grande → coleta (2 vueltas alrededor del brazo
+  //     horizontal, visible en imagenes/curva-jj.png y montaña-frontal.png)
+  //     → punta del brazo alto. Cada vuelta avanza en +x para que la coleta
+  //     funcione como un resorte alrededor del brazo.
   { p: vec(-0.07, 0.945, 0.02), id: 'inicio' },
-  { p: vec(0.0, 0.94, 0.025) },
-  { p: vec(0.09, 0.917, 0.03) },
-  { p: vec(0.165, 0.845, 0.025) },
-  { p: vec(0.215, 0.73, 0.015) },
+  { p: vec(-0.085, 0.935, 0.055) },  // sale por el frente de la boca
+  { p: vec(-0.085, 0.86, 0.07) },    // baja por el frente de la torre
+  { p: vec(-0.075, 0.78, 0.075) },
+  { p: vec(-0.06, 0.71, 0.07) },     // llega al nivel del brazo, fuera de la torre
+  { p: vec(0.05, 0.69, 0.08) },      // transición al coil (ya fuera de la torre grande)
+  // Coleta: 2 vueltas en espiral alrededor del brazo (plano Y-Z, radio 0.065,
+  // avanzando en +x). Puntos muestreados cada 60° de giro.
+  { p: vec(0.06, 0.665, 0) },        // 0°  (arriba)
+  { p: vec(0.07, 0.633, 0.056) },    // 60° (arriba-frente)
+  { p: vec(0.08, 0.567, 0.056) },    // 120° (abajo-frente)
+  { p: vec(0.09, 0.535, 0) },        // 180° (abajo)
+  { p: vec(0.1, 0.567, -0.056) },    // 240° (abajo-atrás)
+  { p: vec(0.11, 0.633, -0.056) },   // 300° (arriba-atrás)
+  { p: vec(0.12, 0.665, 0) },        // 360° (arriba, inicio de vuelta 2)
+  { p: vec(0.13, 0.633, 0.056) },    // 60°
+  { p: vec(0.14, 0.567, 0.056) },    // 120°
+  { p: vec(0.15, 0.535, 0) },        // 180°
+  { p: vec(0.16, 0.567, -0.056) },   // 240°
+  { p: vec(0.17, 0.633, -0.056) },   // 300°
+  // Salida de la coleta hacia la punta del brazo:
+  { p: vec(0.18, 0.66, -0.02) },
   { p: vec(0.195, 0.65, -0.005), id: 'brazo' },
   // B · Vuelta completa a la torre grande: por detrás, lado izquierdo, al frente.
   { p: vec(0.13, 0.632, -0.085) },
