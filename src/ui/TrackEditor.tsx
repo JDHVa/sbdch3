@@ -82,7 +82,7 @@ export function TrackEditor() {
         onPointerLeave={() => setDragging(null)}
       >
         {/* suelo */}
-        <line x1={PAD} y1={toSvgY(0)} x2={VIEW_W - PAD} y2={toSvgY(0)} stroke="#2a313c" strokeDasharray="3 3" />
+        <line x1={PAD} y1={toSvgY(0)} x2={VIEW_W - PAD} y2={toSvgY(0)} stroke="#404040" strokeDasharray="3 3" />
         {/* pista */}
         <polyline points={polyline} fill="none" stroke="#c9a26a" strokeWidth={2.5} />
         {/* puntos */}
@@ -92,8 +92,8 @@ export function TrackEditor() {
             cx={toSvgX(p.x)}
             cy={toSvgY(p.y)}
             r={dragging === i ? 7 : 5}
-            fill={dragging === i ? '#4da3ff' : '#e6e9ef'}
-            stroke="#0e1116"
+            fill={dragging === i ? '#fd4a02' : '#f2f2f2'}
+            stroke="#000000"
             strokeWidth={1.5}
             style={{ cursor: 'grab' }}
             onPointerDown={(e) => {

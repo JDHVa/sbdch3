@@ -1,21 +1,23 @@
 :root {
-  --bg: #0d1117;
-  --panel: #12171f;
-  --panel-2: #171d27;
-  --panel-3: #1f2632;
-  --border: #252e3b;
-  --border-strong: #324054;
-  --text: #e8ecf2;
-  --muted: #8d98a8;
-  --accent: #4da3ff;
-  --accent-ink: #04121f;
-  --accent-soft: rgba(77, 163, 255, 0.14);
-  --ke: #ff8c42; /* energía cinética */
-  --pe: #4da3ff; /* energía potencial */
-  --total: #5ad19b; /* energía total */
-  --lost: #a07cf0; /* energía perdida */
-  --danger: #ff453a;
-  --glass: rgba(16, 21, 29, 0.78);
+  /* Paleta del proyecto: naranja #fd4a02, gris claro #b4b4b4,
+     gris fuerte #404040, negro #000000, blanco #f2f2f2. */
+  --bg: #000000;
+  --panel: #1a1a1a;
+  --panel-2: #262626;
+  --panel-3: #333333;
+  --border: #404040;
+  --border-strong: #595959;
+  --text: #f2f2f2;
+  --muted: #b4b4b4;
+  --accent: #fd4a02;
+  --accent-ink: #000000;
+  --accent-soft: rgba(253, 74, 2, 0.16);
+  --ke: #fd4a02;   /* energía cinética — naranja */
+  --pe: #b4b4b4;   /* energía potencial — gris claro */
+  --total: #f2f2f2;/* energía total — blanco */
+  --lost: #595959; /* energía perdida — gris */
+  --danger: #fd4a02;
+  --glass: rgba(26, 26, 26, 0.82);
   --radius: 14px;
 
   color-scheme: dark;
@@ -84,7 +86,7 @@ body,
   place-items: center;
   font-size: 18px;
   color: var(--accent-ink);
-  background: linear-gradient(135deg, #6cb6ff, #3d7ff0);
+  background: linear-gradient(135deg, #fd4a02, #b4310a);
   flex-shrink: 0;
 }
 
@@ -202,7 +204,7 @@ button {
 }
 
 button:hover {
-  background: #283141;
+  background: #333333;
 }
 
 button:focus-visible {
@@ -234,8 +236,8 @@ button.block {
 }
 
 button.is-on {
-  border-color: rgba(90, 209, 155, 0.5);
-  background: rgba(90, 209, 155, 0.1);
+  border-color: rgba(253, 74, 2, 0.5);
+  background: rgba(253, 74, 2, 0.1);
   color: var(--total);
 }
 
@@ -298,8 +300,8 @@ button:disabled {
 
 .segmented button.active {
   background: var(--accent-soft);
-  border-color: rgba(77, 163, 255, 0.35);
-  color: #a9d1ff;
+  border-color: rgba(253, 74, 2, 0.35);
+  color: #fd4a02;
 }
 
 .mode-switch button.active {
@@ -405,7 +407,7 @@ select {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #c3cbd6;
+  background: #f2f2f2;
   transition: transform 0.15s;
 }
 
@@ -515,9 +517,9 @@ select {
 }
 
 .alert {
-  background: rgba(255, 69, 58, 0.1);
-  border: 1px solid rgba(255, 69, 58, 0.5);
-  color: #ffb3ad;
+  background: rgba(253, 74, 2, 0.1);
+  border: 1px solid rgba(253, 74, 2, 0.5);
+  color: #fd4a02;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 13px;
@@ -586,8 +588,8 @@ select {
 }
 
 .chip.start {
-  background: rgba(90, 209, 155, 0.12);
-  border-color: rgba(90, 209, 155, 0.5);
+  background: rgba(253, 74, 2, 0.12);
+  border-color: rgba(253, 74, 2, 0.5);
   color: var(--total);
 }
 
@@ -640,9 +642,9 @@ select {
 }
 
 .chip-toggle.on {
-  color: #a9d1ff;
+  color: #fd4a02;
   background: var(--accent-soft);
-  border-color: rgba(77, 163, 255, 0.35);
+  border-color: rgba(253, 74, 2, 0.35);
 }
 
 /* Barra flotante inferior */
@@ -709,7 +711,7 @@ select {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #3d7ff0, var(--accent));
+  background: linear-gradient(90deg, #b4310a, var(--accent));
 }
 
 .progress-tick {
@@ -735,12 +737,12 @@ select {
 .progress-tick.passed {
   background: var(--ke);
   border-color: #fff;
-  color: #1a0d00;
+  color: #000000;
 }
 
 /* Etiquetas 3D */
 .dim-label {
-  background: rgba(77, 163, 255, 0.92);
+  background: rgba(253, 74, 2, 0.92);
   color: var(--accent-ink);
   font: 650 11px 'Inter', system-ui, sans-serif;
   padding: 2px 7px;
@@ -753,8 +755,8 @@ select {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(255, 140, 66, 0.95);
-  color: #1a0d00;
+  background: rgba(253, 74, 2, 0.95);
+  color: #000000;
   font: 700 10px 'Inter', system-ui, sans-serif;
   display: grid;
   place-items: center;
@@ -768,9 +770,9 @@ select {
   min-width: 180px;
   padding: 9px 11px 10px;
   border-radius: 10px;
-  background: rgba(10, 14, 20, 0.92);
+  background: rgba(0, 0, 0, 0.92);
   color: var(--text);
-  border: 1px solid rgba(255, 207, 63, 0.45);
+  border: 1px solid rgba(253, 74, 2, 0.45);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -788,16 +790,16 @@ select {
   transform: translateX(-50%) rotate(45deg);
   width: 9px;
   height: 9px;
-  background: rgba(10, 14, 20, 0.92);
-  border-right: 1px solid rgba(255, 207, 63, 0.45);
-  border-bottom: 1px solid rgba(255, 207, 63, 0.45);
+  background: rgba(0, 0, 0, 0.92);
+  border-right: 1px solid rgba(253, 74, 2, 0.45);
+  border-bottom: 1px solid rgba(253, 74, 2, 0.45);
 }
 
 .ball-tooltip .bt-title {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #ffcf3f;
+  color: #fd4a02;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -807,7 +809,7 @@ select {
 }
 
 .ball-tooltip .bt-title .bi {
-  color: #ffcf3f;
+  color: #fd4a02;
   font-size: 14px;
 }
 
@@ -841,66 +843,6 @@ select {
   color: var(--muted);
   font-style: normal;
   font-size: 10px;
-}
-
-/* Insignia "Calibrado con video" en la barra superior de la escena real */
-.view-bar-right {
-  display: inline-flex;
-  gap: 8px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.calib-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 11px;
-  border-radius: 11px;
-  color: var(--text);
-  cursor: help;
-  border: 1px solid rgba(90, 209, 155, 0.45);
-}
-
-.calib-chip .bi {
-  color: var(--total);
-  font-size: 15px;
-}
-
-.calib-chip .calib-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--total);
-  box-shadow: 0 0 0 0 rgba(90, 209, 155, 0.7);
-  animation: calib-pulse 2.1s ease-out infinite;
-  flex-shrink: 0;
-}
-
-@keyframes calib-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(90, 209, 155, 0.55); }
-  70% { box-shadow: 0 0 0 7px rgba(90, 209, 155, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(90, 209, 155, 0); }
-}
-
-.calib-chip .calib-text {
-  display: inline-flex;
-  flex-direction: column;
-  line-height: 1.15;
-}
-
-.calib-chip .calib-text b {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.calib-chip .calib-text em {
-  font-style: normal;
-  font-size: 10.5px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
 }
 
 /* --- Montaña real: cálculos ------------------------------------------------------------ */
@@ -1058,9 +1000,6 @@ code {
   }
   .view-bar .segmented span,
   .chip-toggle span {
-    display: none;
-  }
-  .calib-chip .calib-text em {
     display: none;
   }
   .hud-stats {

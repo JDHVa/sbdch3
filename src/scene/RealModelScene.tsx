@@ -267,7 +267,7 @@ function Ball() {
       {/* Halo para encontrarlo (el balín real mide 1 cm). Agranda el área de hover. */}
       <mesh renderOrder={3} onPointerOver={onOver} onPointerOut={onOut}>
         <sphereGeometry args={[0.016, 20, 20]} />
-        <meshBasicMaterial color="#ffcf3f" transparent opacity={hover ? 0.5 : 0.28} depthWrite={false} />
+        <meshBasicMaterial color="#fd4a02" transparent opacity={hover ? 0.5 : 0.28} depthWrite={false} />
       </mesh>
       {hover && (
         <Html
@@ -294,9 +294,9 @@ function Dimensions() {
         const z = t.base.z + t.side / 2 + 0.01;
         return (
           <group key={t.id}>
-            <Line points={[[x, 0, z], [x, t.height, z]]} color="#4da3ff" lineWidth={1.5} />
-            <Line points={[[x - 0.012, t.height, z], [x + 0.03, t.height, z]]} color="#4da3ff" lineWidth={1.5} />
-            <Line points={[[x - 0.012, 0, z], [x + 0.03, 0, z]]} color="#4da3ff" lineWidth={1.5} />
+            <Line points={[[x, 0, z], [x, t.height, z]]} color="#fd4a02" lineWidth={1.5} />
+            <Line points={[[x - 0.012, t.height, z], [x + 0.03, t.height, z]]} color="#fd4a02" lineWidth={1.5} />
+            <Line points={[[x - 0.012, 0, z], [x + 0.03, 0, z]]} color="#fd4a02" lineWidth={1.5} />
             <Html position={[x, t.height / 2, z]} center zIndexRange={[10, 0]}>
               <div className="dim-label">{String(Math.round(t.height * 1000) / 10)} cm</div>
             </Html>
@@ -385,22 +385,6 @@ function ToggleChip({ on, onClick, icon, label }: { on: boolean; onClick: () => 
   );
 }
 
-/** Insignia que muestra que la simulación está calibrada con los tiempos del video. */
-function CalibrationBadge() {
-  const calibration = useCoasterStore((s) => s.calibration);
-  const title = `Pérdidas ajustadas por mínimos cuadrados contra los tiempos medidos en el video.\nμ = ${fmt(calibration.mu, 3)}  ·  k = ${fmt(calibration.drag, 2)} m⁻¹  ·  RMS = ${fmt(calibration.rmsError, 2)} s`;
-  return (
-    <div className="calib-chip glass" title={title}>
-      <span className="calib-dot" aria-hidden />
-      <Icon name="camera-reels" />
-      <span className="calib-text">
-        <b>Calibrado con video</b>
-        <em>RMS {fmt(calibration.rmsError, 2)} s · μ {fmt(calibration.mu, 3)} · k {fmt(calibration.drag, 2)}</em>
-      </span>
-    </div>
-  );
-}
-
 export function RealModelScene() {
   const [preset, setPreset] = useState<ViewPreset>('video');
   const [nonce, setNonce] = useState(0);
@@ -419,12 +403,9 @@ export function RealModelScene() {
             setNonce((n) => n + 1);
           }}
         />
-        <div className="view-bar-right">
-          <CalibrationBadge />
-          <div className="view-group glass">
-            <ToggleChip on={showDims} onClick={() => setShowDims((v) => !v)} icon="rulers" label="Cotas" />
-            <ToggleChip on={showMarks} onClick={() => setShowMarks((v) => !v)} icon="123" label="Puntos" />
-          </div>
+        <div className="view-group glass">
+          <ToggleChip on={showDims} onClick={() => setShowDims((v) => !v)} icon="rulers" label="Cotas" />
+          <ToggleChip on={showMarks} onClick={() => setShowMarks((v) => !v)} icon="123" label="Puntos" />
         </div>
       </div>
 
@@ -433,7 +414,7 @@ export function RealModelScene() {
         camera={{ position: PRESETS.video.pos.toArray(), fov: 45, near: 0.01, far: 50 }}
         dpr={[1, 2]}
       >
-        <color attach="background" args={['#1c2129']} />
+        <color attach="background" args={['#262626']} />
         <hemisphereLight args={['#f4f1ea', '#3a3f47', 0.9]} />
         <directionalLight
           position={[1.2, 2.2, 1.4]}

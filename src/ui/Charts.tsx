@@ -58,8 +58,9 @@ export function Charts() {
     return rows;
   }, [track, profile, params]);
 
-  const axis = { stroke: '#6f7a8a', fontSize: 10 };
-  const grid = '#222936';
+  const axis = { stroke: '#b4b4b4', fontSize: 10 };
+  const grid = '#404040';
+  const tooltipStyle = { background: '#1a1a1a', border: '1px solid #404040', fontSize: 12 };
 
   return (
     <Card icon="graph-up" title="Gráficas vs distancia">
@@ -70,14 +71,11 @@ export function Charts() {
           <CartesianGrid stroke={grid} />
           <XAxis dataKey="s" {...axis} tickFormatter={(v) => v.toFixed(1)} />
           <YAxis {...axis} />
-          <Tooltip
-            contentStyle={{ background: '#11151b', border: '1px solid #2a313c', fontSize: 12 }}
-            labelFormatter={(v) => `s = ${v} m`}
-          />
+          <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => `s = ${v} m`} />
           <ReferenceLine x={+liveS.toFixed(3)} stroke="#ffffff" strokeDasharray="3 3" />
-          <Line type="monotone" dataKey="keTotal" name="Cinética" stroke="#ff8c42" dot={false} strokeWidth={2} isAnimationActive={false} />
-          <Line type="monotone" dataKey="pe" name="Potencial" stroke="#4da3ff" dot={false} strokeWidth={2} isAnimationActive={false} />
-          <Line type="monotone" dataKey="mechanical" name="Total" stroke="#5ad19b" dot={false} strokeWidth={2} strokeDasharray="4 2" isAnimationActive={false} />
+          <Line type="monotone" dataKey="keTotal" name="Cinética" stroke="#fd4a02" dot={false} strokeWidth={2} isAnimationActive={false} />
+          <Line type="monotone" dataKey="pe" name="Potencial" stroke="#b4b4b4" dot={false} strokeWidth={2} isAnimationActive={false} />
+          <Line type="monotone" dataKey="mechanical" name="Total" stroke="#f2f2f2" dot={false} strokeWidth={2} strokeDasharray="4 2" isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
 
@@ -87,9 +85,9 @@ export function Charts() {
           <CartesianGrid stroke={grid} />
           <XAxis dataKey="s" {...axis} tickFormatter={(v) => v.toFixed(1)} />
           <YAxis {...axis} />
-          <Tooltip contentStyle={{ background: '#11151b', border: '1px solid #2a313c', fontSize: 12 }} labelFormatter={(v) => `s = ${v} m`} />
+          <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => `s = ${v} m`} />
           <ReferenceLine x={+liveS.toFixed(3)} stroke="#ffffff" strokeDasharray="3 3" />
-          <Line type="monotone" dataKey="speed" name="Rapidez" stroke="#e6e9ef" dot={false} strokeWidth={2} isAnimationActive={false} />
+          <Line type="monotone" dataKey="speed" name="Rapidez" stroke="#f2f2f2" dot={false} strokeWidth={2} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
 
@@ -101,10 +99,10 @@ export function Charts() {
           <CartesianGrid stroke={grid} />
           <XAxis dataKey="s" {...axis} tickFormatter={(v) => v.toFixed(1)} />
           <YAxis {...axis} />
-          <Tooltip contentStyle={{ background: '#11151b', border: '1px solid #2a313c', fontSize: 12 }} labelFormatter={(v) => `s = ${v} m`} />
-          <ReferenceLine y={0} stroke="#ff453a" />
+          <Tooltip contentStyle={tooltipStyle} labelFormatter={(v) => `s = ${v} m`} />
+          <ReferenceLine y={0} stroke="#fd4a02" />
           <ReferenceLine x={+liveS.toFixed(3)} stroke="#ffffff" strokeDasharray="3 3" />
-          <Line type="monotone" dataKey="gForce" name="g" stroke="#c58bff" dot={false} strokeWidth={2} isAnimationActive={false} />
+          <Line type="monotone" dataKey="gForce" name="g" stroke="#fd4a02" dot={false} strokeWidth={2} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>
 
