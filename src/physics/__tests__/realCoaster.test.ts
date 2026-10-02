@@ -29,10 +29,8 @@ describe('geometría de la montaña real', () => {
   it('sale de lo alto de la torre grande y termina junto a la tabla', () => {
     expect(track.samples[0].height).toBeGreaterThan(0.92);
     expect(track.samples[track.samples.length - 1].height).toBeLessThan(0.03);
-    // Ventana amplia: la coleta de 2 vueltas alrededor del brazo alto
-    // (imagenes/curva-jj.png) suma ~0.8 m al recorrido.
-    expect(track.length).toBeGreaterThan(4.5);
-    expect(track.length).toBeLessThan(5.6);
+    expect(track.length).toBeGreaterThan(3.5);
+    expect(track.length).toBeLessThan(5);
   });
 
   it('la manguera no atraviesa torres ni brazos (tolerancia 3 mm)', () => {
@@ -81,21 +79,15 @@ describe('física en tubo (modelo normal)', () => {
 });
 
 describe('calibración con el video', () => {
-  it('reproduce los tiempos medidos con error RMS < 0.5 s', () => {
-    // Con la coleta nueva el modelo cubre ~5 m contra los 4.3 m anteriores;
-    // la calibración (μ, k) por mínimos cuadrados contra los tiempos del
-    // video queda en el orden de 0.4 s por frame por el "final" borroso.
-    expect(cal.rmsError).toBeLessThan(0.5);
+  it('reproduce los tiempos medidos con error RMS < 0.35 s', () => {
+    expect(cal.rmsError).toBeLessThan(0.35);
+    expect(cal.drag).toBeGreaterThan(0);
   });
 
-  it('los tramos mejor medidos coinciden a ±0.45 s', () => {
-    // Tolerancia amplia: los frames del video se tomaron con la espiral
-    // horizontal vieja (una media vuelta) y ahora la coleta son 2.5 vueltas
-    // verticales, así que los puntos m_entrada/m_salida ya no marcan el
-    // mismo evento visual.
+  it('los tramos mejor medidos coinciden a ±0.15 s', () => {
     const sim = simulatedCheckpointTimes(track, real);
     for (const c of VIDEO_CHECKPOINTS.filter((c) => c.weight === 1 && c.id !== 'entre')) {
-      expect(Math.abs(sim[c.id] - videoTime(c.frame))).toBeLessThan(0.45);
+      expect(Math.abs(sim[c.id] - videoTime(c.frame))).toBeLessThan(0.15);
     }
   });
 

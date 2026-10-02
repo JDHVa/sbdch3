@@ -135,9 +135,10 @@ interface PathPoint {
   id?: CheckpointId;
 }
 
-/** Punto en una vuelta alrededor de la torre mediana a la altura `y`. */
-function aroundMediumR(deg: number, y: number, r: number): Vec3 {
+/** Punto en la vuelta alrededor de la torre mediana (radio 10 cm). */
+function aroundMedium(deg: number, y: number): Vec3 {
   const c = TOWERS[1].base;
+  const r = 0.1;
   const a = (deg * Math.PI) / 180;
   return vec(c.x + r * Math.cos(a), y, c.z + r * Math.sin(a));
 }
@@ -160,30 +161,17 @@ const PATH: PathPoint[] = [
   { p: vec(0.07, 0.556, 0.135) },
   { p: vec(0.21, 0.538, 0.115), id: 'entre' },
   { p: vec(0.34, 0.522, 0.05) },
-  // M · Coleta vertical descendente alrededor de la torre mediana (61 cm):
-  //     2 vueltas en espiral en la parte alta de la torre, radio 8.5 cm
-  //     (fuera del lado de 8 cm + margen para el tubo). Entrada y salida en
-  //     el FRENTE (angle 90°, z > 0) para que las transiciones desde la
-  //     sección C y hacia la D no crucen por detrás de la torre.
-  //     Visible en imagenes/curva-jj.png y imagenes/montaña-frontal.png.
-  { p: aroundMediumR(90, 0.56, 0.085), id: 'm_entrada' }, //   0° (frente)
-  { p: aroundMediumR(30, 0.548, 0.085) },                 //  60°
-  { p: aroundMediumR(-30, 0.536, 0.085) },                // 120°
-  { p: aroundMediumR(-90, 0.524, 0.085) },                // 180° (atrás)
-  { p: aroundMediumR(-150, 0.512, 0.085) },               // 240°
-  { p: aroundMediumR(-210, 0.5, 0.085) },                 // 300°
-  { p: aroundMediumR(90, 0.488, 0.085), id: 'm_atras' },  // 360° (vuelta 1 completa)
-  { p: aroundMediumR(30, 0.476, 0.085) },
-  { p: aroundMediumR(-30, 0.464, 0.085) },
-  { p: aroundMediumR(-90, 0.452, 0.085) },
-  { p: aroundMediumR(-150, 0.44, 0.085) },
-  { p: aroundMediumR(-210, 0.428, 0.085) },
-  { p: aroundMediumR(90, 0.416, 0.085), id: 'm_salida' }, // 720° (vuelta 2 completa)
-  // D · Sale de la coleta mediana por el FRENTE (y≈0.42, z≈0) y baja de
-  //     frente al nivel de la caja de la pequeña, por fuera del box.
-  { p: vec(0.58, 0.405, 0.05) },
-  { p: vec(0.7, 0.4, 0.15) },
-  { p: vec(0.85, 0.42, 0.24) },    // llega cerca de la punta de la caja, por fuera
+  // M · Espiral alrededor de la torre mediana (izq → atrás → der). En el video
+  //     el tubo sube unos centímetros aquí (el balín se frena visiblemente).
+  { p: aroundMedium(180, 0.53), id: 'm_entrada' },
+  { p: aroundMedium(225, 0.545) },
+  { p: aroundMedium(270, 0.553), id: 'm_atras' },
+  { p: aroundMedium(315, 0.55) },
+  { p: aroundMedium(360, 0.54), id: 'm_salida' },
+  // D · Bajada hacia la punta de la caja de la torre pequeña.
+  { p: vec(0.64, 0.522, 0.03) },
+  { p: vec(0.74, 0.495, 0.16) },
+  { p: vec(0.845, 0.47, 0.215) },
   // S · Rodea la punta de la caja y regresa pegada al frente (cinchos).
   { p: vec(0.885, 0.455, 0.3), id: 's_punta' },
   { p: vec(0.845, 0.449, 0.358) },
