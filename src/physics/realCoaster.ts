@@ -54,10 +54,6 @@ export const ARMS: { id: string; label: string; box: Box }[] = [
   { id: 'brazo-alto', label: 'Brazo alto (torre grande)', box: { center: vec(0.08, 0.6, 0), size: vec(0.26, 0.05, 0.06) } },
   // Brazo bajo de la torre grande (lado izquierdo): sostiene la vuelta final.
   { id: 'brazo-bajo', label: 'Brazo bajo (torre grande)', box: { center: vec(-0.115, 0.108, 0.02), size: vec(0.15, 0.03, 0.08) } },
-  // Brazo horizontal de la torre mediana: travesaño que sobresale hacia el
-  // frente, sobre el que la manguera hace una vuelta completa (visible en
-  // imagenes/esta_srive.png).
-  { id: 'brazo-mediana', label: 'Brazo (torre mediana)', box: { center: vec(0.5, 0.6, 0.05), size: vec(0.16, 0.025, 0.045) } },
   // Caja sobre la torre pequeña: la manguera la rodea con cinchos.
   { id: 'caja-pequena', label: 'Caja de la torre pequeña', box: { center: vec(0.7, 0.44, 0.3), size: vec(0.28, 0.07, 0.08) } },
 ];
@@ -139,6 +135,14 @@ interface PathPoint {
   id?: CheckpointId;
 }
 
+/** Punto en la vuelta alrededor de la torre mediana (radio 10 cm). */
+function aroundMedium(deg: number, y: number): Vec3 {
+  const c = TOWERS[1].base;
+  const r = 0.1;
+  const a = (deg * Math.PI) / 180;
+  return vec(c.x + r * Math.cos(a), y, c.z + r * Math.sin(a));
+}
+
 const PATH: PathPoint[] = [
   // A · Arco desde la boca (sobre la torre grande) hasta la punta del brazo alto.
   { p: vec(-0.07, 0.945, 0.02), id: 'inicio' },
@@ -157,23 +161,13 @@ const PATH: PathPoint[] = [
   { p: vec(0.07, 0.556, 0.135) },
   { p: vec(0.21, 0.538, 0.115), id: 'entre' },
   { p: vec(0.34, 0.522, 0.05) },
-  // M · Vuelta vertical completa alrededor del brazo horizontal de la torre
-  //     mediana. La manguera entra por la izquierda (bajo del brazo), sube
-  //     por el frente, pasa por arriba, baja por detrás y sale por la
-  //     derecha. Loop centrado en z=0.05 (brazo sobresale al frente de la
-  //     torre, para que el back del loop no cruce el poste de foam).
-  //     Visible en imagenes/esta_srive.png.
-  { p: vec(0.4, 0.52, 0.03), id: 'm_entrada' },     // entrada por la izquierda
-  { p: vec(0.44, 0.525, 0.05) },                     // bajo del brazo (vuelta inicia)
-  { p: vec(0.455, 0.547, 0.103) },                   // frente-bajo
-  { p: vec(0.47, 0.6, 0.125) },                      // frente
-  { p: vec(0.485, 0.653, 0.103) },                   // frente-arriba
-  { p: vec(0.5, 0.675, 0.05), id: 'm_atras' },       // arriba del brazo
-  { p: vec(0.515, 0.653, -0.003) },                  // atrás-arriba
-  { p: vec(0.53, 0.6, -0.025) },                     // atrás
-  { p: vec(0.545, 0.547, -0.003) },                  // atrás-bajo
-  { p: vec(0.56, 0.525, 0.05) },                     // bajo del brazo (vuelta cerrada)
-  { p: vec(0.6, 0.52, 0.03), id: 'm_salida' },      // salida por la derecha
+  // M · Espiral alrededor de la torre mediana (izq → atrás → der). En el video
+  //     el tubo sube unos centímetros aquí (el balín se frena visiblemente).
+  { p: aroundMedium(180, 0.53), id: 'm_entrada' },
+  { p: aroundMedium(225, 0.545) },
+  { p: aroundMedium(270, 0.553), id: 'm_atras' },
+  { p: aroundMedium(315, 0.55) },
+  { p: aroundMedium(360, 0.54), id: 'm_salida' },
   // D · Bajada hacia la punta de la caja de la torre pequeña.
   { p: vec(0.64, 0.522, 0.03) },
   { p: vec(0.74, 0.495, 0.16) },
